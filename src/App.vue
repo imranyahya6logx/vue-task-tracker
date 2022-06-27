@@ -1,32 +1,53 @@
 <template>
   <div class="container">
-    <Header title="Task Tracker" />
-    <AddForm />
-    <Tasks @delete-task="deleteTask" :tasks="tasks" />
+    <Header @toggle-add-task="toggleAddTask" title="Task Tracker" :showAddTask="showAddTask" />
+    <div v-show="showAddTask">
+      <AddTask @add-task="addTask" buttonName="Add Task" />
+    </div>
+    <Tasks @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" />
   </div>
 </template>
 
 <script>
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
-import AddForm from "./components/AddForm";
+import AddTask from "./components/AddTask";
 export default {
   components: {
     Header,
     Tasks,
-    AddForm
+    AddTask
   },
   data() {
     return {
       tasks: [],
+      showAddTask: true
     };
   },
   methods: {
+
+    addTask(task){
+      this.tasks = [...this.tasks,task]
+    },
+
+    toggleAddTask(){
+      this.showAddTask = !this.showAddTask
+
+    },
+
     deleteTask(id) {
       if (confirm("Are You Sure ? ")) {
         this.tasks = this.tasks.filter((task) => task.id != id);
       }
     },
+
+    toggleReminder(id) {
+      this.tasks = this.tasks.map((task) => task.id == id
+      ? {...task, reminder: !task.reminder}:task
+      ) 
+    },
+
+    
   },
   created() {
     this.tasks = [
